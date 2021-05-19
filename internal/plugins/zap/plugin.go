@@ -9,6 +9,7 @@ import (
 )
 
 const contextKey = lifecycle.ContextKey("logger")
+
 var defaultLogger = zap.NewNop()
 
 func FromContext(ctx context.Context) *zap.Logger {
