@@ -21,10 +21,11 @@ import (
 func init() {
 	logrus.SetFormatter(&logrus.JSONFormatter{
 		FieldMap: logrus.FieldMap{
-			logrus.FieldKeyTime: "ts",
 			logrus.FieldKeyLevel: "level",
-			logrus.FieldKeyMsg: "msg",
+			logrus.FieldKeyTime: "ts",
 			logrus.FieldKeyFunc: "caller",
+			logrus.FieldKeyMsg: "msg",
+			logrus.FieldKeyLogrusError: "err",
 		},
 	})
 }
