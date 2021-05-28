@@ -4,11 +4,13 @@ import (
 	"context"
 
 	"github.com/effxhq/go-lifecycle"
+	"go.uber.org/zap/zapcore"
 
 	"go.uber.org/zap"
 )
 
 const contextKey = lifecycle.ContextKey("logger")
+
 var defaultLogger = zap.NewNop()
 
 func FromContext(ctx context.Context) *zap.Logger {
@@ -24,7 +26,10 @@ func Plugin() lifecycle.Plugin {
 
 	return &lifecycle.PluginFuncs{
 		InitializeFunc: func(app *lifecycle.Application) (err error) {
-			logger, err = zap.NewProduction()
+			cfg := zap.NewProductionConfig()
+			cfg.EncoderConfig.EncodeTime = zapcore.RFC3339TimeEncoder
+
+			logger, err = cfg.Build()
 			if err != nil {
 				return err
 			}
