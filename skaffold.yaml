@@ -12,7 +12,7 @@ build:
     sha256: {}
 
   artifacts:
-    - image: cluster-agent
+    - image: effx/cluster-agent
       docker:
         dockerfile: ./Dockerfile
 
