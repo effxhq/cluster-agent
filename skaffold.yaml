@@ -25,7 +25,7 @@ deploy:
     releases:
       # effx services (abc)
       - name: cluster-agent
-        chartPath: cluster-agent
+        chartPath: deploy/cluster-agent
         namespace: effx
         skipBuildDependencies: true
         imageStrategy:
@@ -33,7 +33,7 @@ deploy:
         artifactOverrides:
           image: cluster-agent
         valuesFiles:
-          - cluster-agent/values.yaml
+          - deploy/cluster-agent/values.yaml
 
 portForward:
   - resourceType: Service
