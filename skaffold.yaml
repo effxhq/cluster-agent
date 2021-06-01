@@ -34,10 +34,3 @@ deploy:
           image: cluster-agent
         valuesFiles:
           - deploy/cluster-agent/values.yaml
-
-portForward:
-  - resourceType: Service
-    resourceName: cluster-agent
-    namespace: effx
-    port: 8080
-    localPort: 8105
