@@ -17,6 +17,6 @@ RUN go build -o cluster-agent ./
 
 FROM gcr.io/distroless/base-debian10
 
-COPY --from=BUILDER /effx/cluster-agent /usr/bin/server
+COPY --from=BUILDER /effx/cluster-agent /usr/bin/cluster-agent
 
-CMD [ "/usr/bin/server" ]
+CMD [ "/usr/bin/cluster-agent" ]
