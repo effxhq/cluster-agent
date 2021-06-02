@@ -7,6 +7,7 @@ import (
 	"github.com/effxhq/cluster-agent/internal/plugins/kubernetes/deployments"
 	"github.com/effxhq/cluster-agent/internal/plugins/kubernetes/events"
 	"github.com/effxhq/cluster-agent/internal/plugins/kubernetes/nodes"
+	"github.com/effxhq/cluster-agent/internal/plugins/kubernetes/pods"
 	"github.com/effxhq/cluster-agent/internal/plugins/kubernetes/statefulsets"
 	"github.com/effxhq/go-lifecycle"
 	"github.com/pkg/errors"
@@ -21,10 +22,10 @@ import (
 func init() {
 	logrus.SetFormatter(&logrus.JSONFormatter{
 		FieldMap: logrus.FieldMap{
-			logrus.FieldKeyLevel: "level",
-			logrus.FieldKeyTime: "ts",
-			logrus.FieldKeyFunc: "caller",
-			logrus.FieldKeyMsg: "msg",
+			logrus.FieldKeyLevel:       "level",
+			logrus.FieldKeyTime:        "ts",
+			logrus.FieldKeyFunc:        "caller",
+			logrus.FieldKeyMsg:         "msg",
 			logrus.FieldKeyLogrusError: "err",
 		},
 	})
@@ -69,6 +70,7 @@ func Plugin() lifecycle.Plugin {
 			statefulsets.Setup(ctx, appsFactory)
 			events.Setup(ctx, coreFactory)
 			nodes.Setup(ctx, coreFactory)
+			pods.Setup(ctx, coreFactory)
 
 			return nil
 		},
