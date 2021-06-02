@@ -15,10 +15,6 @@ build:
     - image: cluster-agent
       docker:
         dockerfile: ./Dockerfile
-      sync:
-        infer:
-          - "main.go"
-          - "internal/**"
 
 deploy:
   helm:
