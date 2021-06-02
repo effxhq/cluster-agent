@@ -3,6 +3,7 @@ package kubernetes_plugin
 import (
 	"os"
 
+	client_plugin "github.com/effxhq/cluster-agent/internal/plugins/client"
 	"github.com/effxhq/cluster-agent/internal/plugins/kubernetes/daemonsets"
 	"github.com/effxhq/cluster-agent/internal/plugins/kubernetes/deployments"
 	"github.com/effxhq/cluster-agent/internal/plugins/kubernetes/events"
@@ -31,7 +32,7 @@ func init() {
 	})
 }
 
-func Plugin() lifecycle.Plugin {
+func Plugin(httpClient client_plugin.HTTPClient) lifecycle.Plugin {
 	var kubeClient *kubernetes.Clientset
 	var appsFactory *apps.Factory
 	var coreFactory *core.Factory
@@ -65,12 +66,12 @@ func Plugin() lifecycle.Plugin {
 
 			ctx := app.Context()
 
-			daemonsets.Setup(ctx, appsFactory)
-			deployments.Setup(ctx, appsFactory)
-			statefulsets.Setup(ctx, appsFactory)
-			events.Setup(ctx, coreFactory)
-			nodes.Setup(ctx, coreFactory)
-			pods.Setup(ctx, coreFactory)
+			daemonsets.Setup(ctx, appsFactory, httpClient)
+			deployments.Setup(ctx, appsFactory, httpClient)
+			statefulsets.Setup(ctx, appsFactory, httpClient)
+			events.Setup(ctx, coreFactory, httpClient)
+			nodes.Setup(ctx, coreFactory, httpClient)
+			pods.Setup(ctx, coreFactory, httpClient)
 
 			return nil
 		},
