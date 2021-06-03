@@ -12,7 +12,8 @@ RUN --mount=type=ssh go mod download && go mod verify
 COPY main.go main.go
 COPY internal/ internal/
 
-RUN go build -o cluster-agent ./
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    go build -ldflags="-s -w" -o cluster-agent ./main.go
 
 FROM gcr.io/distroless/base-debian10
 

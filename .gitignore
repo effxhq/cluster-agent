@@ -13,3 +13,5 @@
 
 # Dependency directories
 vendor/
+
+deploy/cluster-agent/values-dev.yaml

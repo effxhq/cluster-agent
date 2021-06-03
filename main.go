@@ -4,6 +4,7 @@ import (
 	"github.com/effxhq/go-lifecycle"
 
 	client_plugin "github.com/effxhq/cluster-agent/internal/plugins/client"
+	http_plugin "github.com/effxhq/cluster-agent/internal/plugins/http"
 	kubernetes_plugin "github.com/effxhq/cluster-agent/internal/plugins/kubernetes"
 	zap_plugin "github.com/effxhq/cluster-agent/internal/plugins/zap"
 )
@@ -15,6 +16,7 @@ func main() {
 
 	app.Initialize(
 		zap_plugin.Plugin(),
+		http_plugin.ServerPlugin(),
 		lifecycle.PluginFuncs{
 			InitializeFunc: func(app *lifecycle.Application) error {
 				return err

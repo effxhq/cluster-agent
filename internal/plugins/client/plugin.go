@@ -13,9 +13,9 @@ import (
 )
 
 type httpClient struct {
-	BaseURL     string `envconfig:"EFFX_BASE_URL"`
-	ExternalID  string `envconfig:"EFFX_EXTERNAL_ID"`  // uuid
-	SecretValue string `envconfig:"EFFX_SECRET_VALUE"` // uuid
+	BaseURL    string `envconfig:"EFFX_BASE_URL"`
+	ExternalID string `envconfig:"EFFX_EXTERNAL_ID"`  // uuid
+	SecretKey  string `envconfig:"EFFX_SECRET_KEY"`   // uuid
 }
 
 type HTTPClient interface {
