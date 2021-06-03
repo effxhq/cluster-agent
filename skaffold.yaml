@@ -1,0 +1,32 @@
+apiVersion: skaffold/v2beta16
+kind: Config
+metadata:
+  name: effx
+build:
+  local:
+    concurrency: 2
+    useBuildkit: true
+    useDockerCLI: true
+
+  tagPolicy:
+    sha256: {}
+
+  artifacts:
+    - image: effx/cluster-agent
+      docker:
+        dockerfile: ./Dockerfile
+
+deploy:
+  helm:
+    releases:
+      # effx services (abc)
+      - name: cluster-agent
+        chartPath: deploy/cluster-agent
+        namespace: effx
+        skipBuildDependencies: true
+        imageStrategy:
+          helm: {}
+        artifactOverrides:
+          image: cluster-agent
+        valuesFiles:
+          - deploy/cluster-agent/values.yaml

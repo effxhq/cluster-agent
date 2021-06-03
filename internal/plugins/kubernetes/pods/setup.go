@@ -1,4 +1,4 @@
-package nodes
+package pods
 
 import (
 	"context"
@@ -12,26 +12,26 @@ import (
 )
 
 func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plugin.HTTPClient) {
-	// TODO: determine if nodes are enabled
+	// TODO: determine if pods are enabled
 
-	nodeController := coreFactory.Core().V1().Node()
-	nodeController.Informer()
-	nodeController.Cache()
+	podController := coreFactory.Core().V1().Pod()
+	podController.Informer()
+	podController.Cache()
 
-	nodeController.OnChange(ctx, appconf.Name, func(id string, node *corev1.Node) (*corev1.Node, error) {
-		if node == nil {
+	podController.OnChange(ctx, appconf.Name, func(id string, pod *corev1.Pod) (*corev1.Pod, error) {
+		if pod == nil {
 			// delete from cache
 			return nil, nil
 		}
 
-		zap_plugin.FromContext(ctx).Info("node", zap.String("id", id))
+		zap_plugin.FromContext(ctx).Info("pod", zap.String("id", id))
 
-		err := httpClient.PostResource(ctx, node)
+		err := httpClient.PostResource(ctx, pod)
 
 		if err != nil {
 			return nil, err
 		}
 
-		return node, nil
+		return pod, nil
 	})
 }
