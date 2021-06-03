@@ -1,0 +1,12 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "cluster-agent.fullname" . }}
+rules:
+  - apiGroups: ['']
+    resources: ['nodes', 'events', 'pods']
+    verbs:     ['list', 'get', 'watch']
+  - apiGroups: ['apps']
+    resources: ['deployments', 'statefulsets', 'daemonsets']
+    verbs:     ['list', 'get', 'watch']

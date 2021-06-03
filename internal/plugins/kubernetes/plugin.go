@@ -1,7 +1,14 @@
 package kubernetes_plugin
 
 import (
-	"os"
+	"github.com/effxhq/go-lifecycle"
+	"github.com/pkg/errors"
+	"github.com/rancher/wrangler-api/pkg/generated/controllers/apps"
+	"github.com/rancher/wrangler-api/pkg/generated/controllers/core"
+	"github.com/rancher/wrangler/pkg/start"
+	"github.com/sirupsen/logrus"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 
 	client_plugin "github.com/effxhq/cluster-agent/internal/plugins/client"
 	"github.com/effxhq/cluster-agent/internal/plugins/kubernetes/daemonsets"
@@ -10,14 +17,6 @@ import (
 	"github.com/effxhq/cluster-agent/internal/plugins/kubernetes/nodes"
 	"github.com/effxhq/cluster-agent/internal/plugins/kubernetes/pods"
 	"github.com/effxhq/cluster-agent/internal/plugins/kubernetes/statefulsets"
-	"github.com/effxhq/go-lifecycle"
-	"github.com/pkg/errors"
-	"github.com/rancher/wrangler-api/pkg/generated/controllers/apps"
-	"github.com/rancher/wrangler-api/pkg/generated/controllers/core"
-	"github.com/rancher/wrangler/pkg/kubeconfig"
-	"github.com/rancher/wrangler/pkg/start"
-	"github.com/sirupsen/logrus"
-	"k8s.io/client-go/kubernetes"
 )
 
 func init() {
@@ -41,10 +40,8 @@ func Plugin(httpClient client_plugin.HTTPClient) lifecycle.Plugin {
 		InitializeFunc: func(app *lifecycle.Application) error {
 			// TODO: determine if kubernetes is enabled
 
-			kubeconfigFile := os.Getenv("KUBECONFIG")
-
-			// This will load the kubeconfig file in a style the same as kubectl
-			cfg, err := kubeconfig.GetNonInteractiveClientConfig(kubeconfigFile).ClientConfig()
+			// replace with in cluster configuration now that we
+			cfg, err := rest.InClusterConfig()
 			if err != nil {
 				logrus.Fatalf("Error building kubeconfig: %s", err.Error())
 			}

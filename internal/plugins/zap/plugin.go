@@ -44,11 +44,11 @@ func Plugin() lifecycle.Plugin {
 			return nil
 		},
 		StartFunc: func(app *lifecycle.Application) error {
-			logger.Info("starting application")
+			logger.Info("starting agent")
 			return nil
 		},
-		MigrateFunc: func(app *lifecycle.Application) error {
-			logger.Info("running migrations")
+		RunFunc: func(app *lifecycle.Application) error {
+			logger.Info("running job")
 			return nil
 		},
 		ShutdownFunc: func(app *lifecycle.Application) error {
