@@ -7,8 +7,7 @@ WORKDIR /effx
 
 COPY go.mod go.mod
 COPY go.sum go.sum
-COPY vendor/ vendor/
-# RUN --mount=type=ssh go mod download && go mod verify
+RUN --mount=type=ssh go mod download && go mod verify
 
 COPY main.go main.go
 COPY internal/ internal/
