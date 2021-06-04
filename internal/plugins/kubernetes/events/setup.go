@@ -26,6 +26,14 @@ func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plu
 
 		zap_plugin.FromContext(ctx).Info("event", zap.String("id", id))
 
+		if event.APIVersion == "" {
+			event.APIVersion = event.InvolvedObject.APIVersion
+		}
+
+		if event.Kind == "" {
+			event.Kind = event.InvolvedObject.Kind
+		}
+
 		err := httpClient.PostResource(ctx, event)
 
 		if err != nil {
