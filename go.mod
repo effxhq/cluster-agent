@@ -10,7 +10,8 @@ require (
 	github.com/rancher/wrangler-api v0.6.0
 	github.com/sirupsen/logrus v1.4.2
 	go.uber.org/zap v1.16.0
-	google.golang.org/grpc v1.26.0
-	k8s.io/api v0.18.8
-	k8s.io/client-go v0.18.8
+	google.golang.org/grpc v1.27.1
+	k8s.io/api v0.21.0
+	k8s.io/apimachinery v0.21.0 // indirect
+	k8s.io/client-go v0.21.0
 )
