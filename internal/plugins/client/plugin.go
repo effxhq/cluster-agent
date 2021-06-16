@@ -47,7 +47,7 @@ func (c httpClient) PostResource(ctx context.Context, obj interface{}) error {
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, bytes.NewBuffer(request))
 	if err != nil {
-		return errors.Wrap(err, "failed form request")
+		return errors.Wrap(err, "failed to form request")
 	}
 
 	req.Header.Set("Authorization", fmt.Sprintf("Token token=%v", c.SecretKey))
