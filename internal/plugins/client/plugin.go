@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/kelseyhightower/envconfig"
@@ -14,8 +15,8 @@ import (
 
 type httpClient struct {
 	BaseURL    string `envconfig:"EFFX_BASE_URL"`
-	ExternalID string `envconfig:"EFFX_EXTERNAL_ID"`  // uuid
-	SecretKey  string `envconfig:"EFFX_SECRET_KEY"`   // uuid
+	ExternalID string `envconfig:"EFFX_EXTERNAL_ID"` // uuid
+	SecretKey  string `envconfig:"EFFX_SECRET_KEY"`  // uuid
 }
 
 type HTTPClient interface {
@@ -35,14 +36,24 @@ func NewHTTPClient() (HTTPClient, error) {
 }
 
 func (c httpClient) PostResource(ctx context.Context, obj interface{}) error {
-	// /v3/hooks/kubernetes/:external_ID
 	request, err := json.Marshal(obj)
 
 	if err != nil {
 		return errors.Wrap(err, "failed to marshal the request")
 	}
 
-	resp, err := http.Post(c.BaseURL+"/v3/hooks/kubernetes/"+c.ExternalID, "application/json", bytes.NewBuffer(request))
+	// /v3/hooks/kubernetes/:external_ID
+	endpoint := c.BaseURL + "/v3/hooks/kubernetes/" + c.ExternalID
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, bytes.NewBuffer(request))
+
+	if err != nil {
+		return errors.Wrap(err, "failed form request")
+	}
+
+	req.Header.Set("Authorization", fmt.Sprintf("Token token=%v", c.SecretKey))
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return errors.Wrap(err, "failed to post")
 	}

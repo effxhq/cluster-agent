@@ -61,4 +61,6 @@ tolerations: []
 
 affinity: {}
 
-env: []
+env:
+  EFFX_EXTERNAL_ID: ""
+  EFFX_SECRET_KEY: ""
