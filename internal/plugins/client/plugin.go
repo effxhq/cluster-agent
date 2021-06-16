@@ -46,7 +46,6 @@ func (c httpClient) PostResource(ctx context.Context, obj interface{}) error {
 	endpoint := c.BaseURL + "/v3/hooks/kubernetes/" + c.ExternalID
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, bytes.NewBuffer(request))
-
 	if err != nil {
 		return errors.Wrap(err, "failed form request")
 	}
