@@ -11,7 +11,15 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# MacOS metadata file:
+.DS_STORE
+
+# VS code person config file
+.vscode
+
 # Dependency directories
 vendor/
 
 deploy/cluster-agent/values-dev.yaml
+
+
