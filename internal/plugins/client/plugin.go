@@ -9,11 +9,8 @@ import (
 	"net/http"
 	"strings"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	"github.com/kelseyhightower/envconfig"
 	"github.com/pkg/errors"
-	"gorm.io/gorm/logger"
 )
 
 type Grant struct {
@@ -40,6 +37,7 @@ type httpClient struct {
 type HTTPClient interface {
 	PostResource(ctx context.Context, obj interface{}) error
 	FetchConfig(ctx context.Context) (*IntegrationConfig, error)
+	IsResourceAllowed(ctx context.Context, requiredGrants ...string) (bool, error)
 }
 
 func NewHTTPClient() (HTTPClient, error) {
@@ -58,15 +56,6 @@ func (c httpClient) PostResource(ctx context.Context, obj interface{}) error {
 
 	if err != nil {
 		return errors.Wrap(err, "failed to marshal the request")
-	}
-
-	allowed, err := c.isPayloadAllowed(ctx, request)
-	if err != nil {
-		return err
-	}
-
-	if !allowed {
-		return nil
 	}
 
 	// /v3/hooks/kubernetes/:external_ID
@@ -127,27 +116,20 @@ func (c httpClient) FetchConfig(ctx context.Context) (*IntegrationConfig, error)
 	return getResponse.IntegrationConfig[0], nil
 }
 
-func (c httpClient) isPayloadAllowed(ctx context.Context, payload []byte) (bool, error) {
+func (c httpClient) IsResourceAllowed(ctx context.Context, requiredGrants ...string) (bool, error) {
 	resp, err := c.FetchConfig(ctx)
 	if err != nil {
 		return false, err
 	}
 
-	var typeMeta metav1.TypeMeta
-
-	err = json.Unmarshal(payload, typeMeta)
-	if err != nil {
-		return false, err
-	}
-
-	if typeMeta.Kind == "" {
-		logger.Error("missing kind, skipping")
-		return false, nil
-	}
-
+	g := make(map[string]bool, len(resp.Grants))
 	for _, grant := range resp.Grants {
-		if strings.ToLower(grant.Name) == strings.ToLower(typeMeta.Kind) && grant.Allowed {
-			return true, nil
+		g[strings.ToLower(grant.Name)] = grant.Allowed
+	}
+
+	for _, requiredGrant := range requiredGrants {
+		if !g[strings.ToLower(requiredGrant)] {
+			return false, nil
 		}
 	}
 

@@ -14,7 +14,14 @@ import (
 )
 
 func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plugin.HTTPClient) {
-	// TODO: determine if nodes are enabled
+	allowed, err := httpClient.IsResourceAllowed(ctx, "nodes")
+	if err != nil {
+		zap_plugin.FromContext(ctx).Info("nodes", zap.Error(err))
+	}
+
+	if !allowed {
+		return
+	}
 
 	nodeController := coreFactory.Core().V1().Node()
 	nodeController.Informer()
@@ -28,7 +35,7 @@ func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plu
 
 		node.TypeMeta = metav1.TypeMeta{
 			APIVersion: "v1",
-			Kind: "Node",
+			Kind:       "Node",
 		}
 
 		zap_plugin.FromContext(ctx).Info("node", zap.String("id", id))

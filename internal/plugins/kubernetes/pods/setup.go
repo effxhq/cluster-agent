@@ -14,7 +14,14 @@ import (
 )
 
 func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plugin.HTTPClient) {
-	// TODO: determine if pods are enabled
+	allowed, err := httpClient.IsResourceAllowed(ctx, "pods")
+	if err != nil {
+		zap_plugin.FromContext(ctx).Info("pods", zap.Error(err))
+	}
+
+	if !allowed {
+		return
+	}
 
 	podController := coreFactory.Core().V1().Pod()
 	podController.Informer()
@@ -28,7 +35,7 @@ func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plu
 
 		pod.TypeMeta = metav1.TypeMeta{
 			APIVersion: "v1",
-			Kind: "Pod",
+			Kind:       "Pod",
 		}
 
 		zap_plugin.FromContext(ctx).Info("pod", zap.String("id", id))

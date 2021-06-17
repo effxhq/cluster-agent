@@ -14,7 +14,14 @@ import (
 )
 
 func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plugin.HTTPClient) {
-	// TODO: determine if events are enabled
+	allowed, err := httpClient.IsResourceAllowed(ctx, "events")
+	if err != nil {
+		zap_plugin.FromContext(ctx).Info("events", zap.Error(err))
+	}
+
+	if !allowed {
+		return
+	}
 
 	eventController := coreFactory.Core().V1().Event()
 	eventController.Informer()
@@ -28,7 +35,7 @@ func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plu
 
 		event.TypeMeta = metav1.TypeMeta{
 			APIVersion: "v1",
-			Kind: "Event",
+			Kind:       "Event",
 		}
 
 		zap_plugin.FromContext(ctx).Info("event", zap.String("id", id))

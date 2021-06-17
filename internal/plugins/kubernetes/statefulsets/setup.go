@@ -14,7 +14,14 @@ import (
 )
 
 func Setup(ctx context.Context, appsFactory *apps.Factory, httpClient client_plugin.HTTPClient) {
-	// TODO: determine if statefulsets are enabled
+	allowed, err := httpClient.IsResourceAllowed(ctx, "stateful_sets")
+	if err != nil {
+		zap_plugin.FromContext(ctx).Info("statefulsets", zap.Error(err))
+	}
+
+	if !allowed {
+		return
+	}
 
 	statefulSetController := appsFactory.Apps().V1().StatefulSet()
 	statefulSetController.Informer()
@@ -28,7 +35,7 @@ func Setup(ctx context.Context, appsFactory *apps.Factory, httpClient client_plu
 
 		statefulset.TypeMeta = metav1.TypeMeta{
 			APIVersion: "apps/v1",
-			Kind: "StatefulSet",
+			Kind:       "StatefulSet",
 		}
 
 		zap_plugin.FromContext(ctx).Info("statefulset", zap.String("id", id))
