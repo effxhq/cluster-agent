@@ -14,7 +14,14 @@ import (
 )
 
 func Setup(ctx context.Context, appsFactory *apps.Factory, httpClient client_plugin.HTTPClient) {
-	// TODO: determine if deployments are enabled
+	allowed, err := httpClient.IsResourceAllowed(ctx, "deployments")
+	if err != nil {
+		zap_plugin.FromContext(ctx).Info("deployments", zap.Error(err))
+	}
+
+	if !allowed {
+		return
+	}
 
 	deploymentController := appsFactory.Apps().V1().Deployment()
 	deploymentController.Informer()
@@ -28,7 +35,7 @@ func Setup(ctx context.Context, appsFactory *apps.Factory, httpClient client_plu
 
 		deployment.TypeMeta = metav1.TypeMeta{
 			APIVersion: "apps/v1",
-			Kind: "Deployment",
+			Kind:       "Deployment",
 		}
 
 		zap_plugin.FromContext(ctx).Info("deployment", zap.String("id", id))

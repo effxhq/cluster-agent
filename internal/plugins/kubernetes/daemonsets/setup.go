@@ -14,7 +14,14 @@ import (
 )
 
 func Setup(ctx context.Context, appsFactory *apps.Factory, httpClient client_plugin.HTTPClient) {
-	// TODO: determine if daemonsets are enabled
+	allowed, err := httpClient.IsResourceAllowed(ctx, "daemon_sets")
+	if err != nil {
+		zap_plugin.FromContext(ctx).Info("daemonset", zap.Error(err))
+	}
+
+	if !allowed {
+		return
+	}
 
 	daemonSetController := appsFactory.Apps().V1().DaemonSet()
 	daemonSetController.Informer()
@@ -28,7 +35,7 @@ func Setup(ctx context.Context, appsFactory *apps.Factory, httpClient client_plu
 
 		daemonset.TypeMeta = metav1.TypeMeta{
 			APIVersion: "apps/v1",
-			Kind: "DaemonSet",
+			Kind:       "DaemonSet",
 		}
 
 		zap_plugin.FromContext(ctx).Info("daemonset", zap.String("id", id))
