@@ -14,15 +14,6 @@ import (
 )
 
 func Setup(ctx context.Context, appsFactory *apps.Factory, httpClient client_plugin.HTTPClient) {
-	allowed, err := httpClient.IsResourceAllowed(ctx, "deployments")
-	if err != nil {
-		zap_plugin.FromContext(ctx).Info("deployments", zap.Error(err))
-	}
-
-	if !allowed {
-		return
-	}
-
 	deploymentController := appsFactory.Apps().V1().Deployment()
 	deploymentController.Informer()
 	deploymentController.Cache()

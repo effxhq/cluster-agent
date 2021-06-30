@@ -14,15 +14,6 @@ import (
 )
 
 func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plugin.HTTPClient) {
-	allowed, err := httpClient.IsResourceAllowed(ctx, "pods")
-	if err != nil {
-		zap_plugin.FromContext(ctx).Info("pods", zap.Error(err))
-	}
-
-	if !allowed {
-		return
-	}
-
 	podController := coreFactory.Core().V1().Pod()
 	podController.Informer()
 	podController.Cache()
