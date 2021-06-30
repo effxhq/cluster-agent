@@ -14,15 +14,6 @@ import (
 )
 
 func Setup(ctx context.Context, appsFactory *apps.Factory, httpClient client_plugin.HTTPClient) {
-	allowed, err := httpClient.IsResourceAllowed(ctx, "daemon_sets")
-	if err != nil {
-		zap_plugin.FromContext(ctx).Info("daemonset", zap.Error(err))
-	}
-
-	if !allowed {
-		return
-	}
-
 	daemonSetController := appsFactory.Apps().V1().DaemonSet()
 	daemonSetController.Informer()
 	daemonSetController.Cache()

@@ -14,15 +14,6 @@ import (
 )
 
 func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plugin.HTTPClient) {
-	allowed, err := httpClient.IsResourceAllowed(ctx, "nodes")
-	if err != nil {
-		zap_plugin.FromContext(ctx).Info("nodes", zap.Error(err))
-	}
-
-	if !allowed {
-		return
-	}
-
 	nodeController := coreFactory.Core().V1().Node()
 	nodeController.Informer()
 	nodeController.Cache()

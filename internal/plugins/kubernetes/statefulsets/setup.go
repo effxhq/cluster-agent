@@ -14,15 +14,6 @@ import (
 )
 
 func Setup(ctx context.Context, appsFactory *apps.Factory, httpClient client_plugin.HTTPClient) {
-	allowed, err := httpClient.IsResourceAllowed(ctx, "stateful_sets")
-	if err != nil {
-		zap_plugin.FromContext(ctx).Info("statefulsets", zap.Error(err))
-	}
-
-	if !allowed {
-		return
-	}
-
 	statefulSetController := appsFactory.Apps().V1().StatefulSet()
 	statefulSetController.Informer()
 	statefulSetController.Cache()
