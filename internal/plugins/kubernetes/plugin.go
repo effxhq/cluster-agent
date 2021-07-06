@@ -7,7 +7,6 @@ import (
 	"github.com/rancher/wrangler-api/pkg/generated/controllers/core"
 	"github.com/rancher/wrangler/pkg/start"
 	"github.com/sirupsen/logrus"
-	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 
 	client_plugin "github.com/effxhq/cluster-agent/internal/plugins/client"
@@ -32,7 +31,6 @@ func init() {
 }
 
 func Plugin(httpClient client_plugin.HTTPClient) lifecycle.Plugin {
-	var kubeClient *kubernetes.Clientset
 	var appsFactory *apps.Factory
 	var coreFactory *core.Factory
 
@@ -44,11 +42,6 @@ func Plugin(httpClient client_plugin.HTTPClient) lifecycle.Plugin {
 			cfg, err := rest.InClusterConfig()
 			if err != nil {
 				logrus.Fatalf("Error building kubeconfig: %s", err.Error())
-			}
-
-			kubeClient, err = kubernetes.NewForConfig(cfg)
-			if err != nil {
-				return errors.Wrap(err, "failed to setup kubernetes client")
 			}
 
 			appsFactory, err = apps.NewFactoryFromConfig(cfg)
