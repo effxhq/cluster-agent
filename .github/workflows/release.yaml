@@ -91,4 +91,4 @@ jobs:
           charts_dir: deploy
           config: cr.yaml
         env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_TOKEN: "${{ secrets.CHART_RELEASER_TOKEN }}"
