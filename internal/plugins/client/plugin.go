@@ -33,7 +33,7 @@ type GetResponse struct {
 }
 
 type httpClient struct {
-	BaseURL     string `envconfig:"EFFX_BASE_URL"`
+	BaseURL     string `envconfig:"EFFX_BASE_URL"     default:"https://in.effx.io"`
 	ExternalID  string `envconfig:"EFFX_EXTERNAL_ID"`
 	SecretKey   string `envconfig:"EFFX_SECRET_KEY"`
 	ClusterName string `envconfig:"EFFX_CLUSTER_NAME"`

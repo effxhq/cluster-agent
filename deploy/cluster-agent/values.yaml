@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: effxhq/cluster-agent
+  repository: ghcr.io/effxhq/cluster-agent
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
