@@ -61,6 +61,16 @@ tolerations: []
 
 affinity: {}
 
-env:
-  EFFX_EXTERNAL_ID: ""
-  EFFX_SECRET_KEY: ""
+# - configure extra environment variables.
+env: []
+
+effx:
+  # - specify the cluster name for this deployment.
+  clusterName: ""
+  # - specify the external id for this deployment.
+  externalID: ""
+  # - specify the secret key to be used.
+  secretKey: ""
+  # - specify an existing secret that contains our external id and secret key. The secret should contain two values:
+  #   `externalId` and `secretKey`.
+  existingSecret: ""

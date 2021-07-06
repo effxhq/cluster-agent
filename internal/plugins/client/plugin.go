@@ -13,6 +13,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	effxClusterNameHeader = "x-effx-cluster-name"
+)
+
 type Grant struct {
 	Name    string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Allowed bool   `protobuf:"varint,2,opt,name=allowed,proto3" json:"allowed,omitempty"`
@@ -29,9 +33,10 @@ type GetResponse struct {
 }
 
 type httpClient struct {
-	BaseURL    string `envconfig:"EFFX_BASE_URL"`
-	ExternalID string `envconfig:"EFFX_EXTERNAL_ID"` // uuid
-	SecretKey  string `envconfig:"EFFX_SECRET_KEY"`  // uuid
+	BaseURL     string `envconfig:"EFFX_BASE_URL"`
+	ExternalID  string `envconfig:"EFFX_EXTERNAL_ID"`
+	SecretKey   string `envconfig:"EFFX_SECRET_KEY"`
+	ClusterName string `envconfig:"EFFX_CLUSTER_NAME"`
 }
 
 type HTTPClient interface {
@@ -67,6 +72,7 @@ func (c httpClient) PostResource(ctx context.Context, obj interface{}) error {
 	}
 
 	req.Header.Set("Authorization", fmt.Sprintf("Token token=%v", c.SecretKey))
+	req.Header.Set(effxClusterNameHeader, c.ClusterName)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
