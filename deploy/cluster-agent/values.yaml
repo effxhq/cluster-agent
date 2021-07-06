@@ -72,5 +72,5 @@ effx:
   # - specify the secret key to be used.
   secretKey: ""
   # - specify an existing secret that contains our external id and secret key. The secret should contain two values:
-  #   `externalId` and `secretKey`.
+  #   `externalID` and `secretKey`.
   existingSecret: ""
