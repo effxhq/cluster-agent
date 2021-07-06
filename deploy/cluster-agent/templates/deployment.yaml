@@ -31,10 +31,28 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            {{- range $key, $value := $.Values.env }}
-            - name: {{ $key }}
-              value: {{ $value }}
+            {{- with .Values.env }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
+            {{- if .Values.effx.existingSecret }}
+            - name: EFFX_EXTERNAL_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.effx.existingSecret }}
+                  key: externalID
+            - name: EFFX_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.effx.existingSecret }}
+                  key: secretKey
+            {{- else }}
+            - name: EFFX_EXTERNAL_ID
+              value: {{ .Values.effx.externalID | quote }}
+            - name: EFFX_SECRET_KEY
+              value: {{ .Values.effx.secretKey | quote }}
+            {{- end }}
+            - name: EFFX_CLUSTER_NAME
+              value: {{ .Values.effx.clusterName | quote }}
           ports:
             - name: http
               containerPort: 8080
