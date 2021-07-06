@@ -58,6 +58,11 @@ jobs:
         with:
           version: v3.4.1
 
+      - name: Set Versions
+        run:
+          yq -w -i ./deploy/cluster-agent/Chart.yaml version ${GITHUB_REF##*/v}
+          yq -w -i ./deploy/cluster-agent/Chart.yaml appVersion ${GITHUB_REF##*/v}
+
       # TODO: Setup GPG signing
       # - name: Prepare GPG key
       #   run: |

@@ -66,7 +66,7 @@ jobs:
           fi
 
       - name: Run chart-testing (lint)
-        run: ct lint --config ct.yaml
+        run: ct lint --config ct.yaml --check-version-increment=false
 
       # TODO: turn back on
 
