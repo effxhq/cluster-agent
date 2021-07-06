@@ -27,6 +27,8 @@ jobs:
         run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 
       - name: Build Container Image
+        env:
+          DOCKER_BUILDKIT: "1"
         run: |
           docker build . -f Dockerfile
 
