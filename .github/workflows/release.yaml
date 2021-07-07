@@ -52,9 +52,24 @@ jobs:
       - name: Prepare
         run: |
           sudo apt-get install wget
-          wget https://github.com/mikefarah/yq/releases/download/v4.9.7/yq_linux_amd64 -O ./yq && chmod +x ./yq
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install yq
+        env:
+          VERSION: 4.9.7
+        run: |
+          wget https://github.com/mikefarah/yq/releases/download/v${VERSION}/yq_linux_amd64 -O ./yq
+          chmod +x ./yq
+          sudo mv ./yq /usr/bin/yq
+
+      - name: Install chart-releaser
+        env:
+          VERSION: 1.2.1
+        run: |
+          wget https://github.com/helm/chart-releaser/releases/download/v${VERSION}/chart-releaser_${VERSION}_linux_amd64.tar.gz -O cr.tgz
+          tar zxf cr.tgz cr && rm cr.tgz
+          sudo mv ./cr /usr/bin/cr
 
       - name: Install Helm
         uses: azure/setup-helm@v1
@@ -65,8 +80,8 @@ jobs:
         shell: bash
         run: |
           export VERSION="\"${GITHUB_REF##*/v}\""
-          ./yq e ".version = ${VERSION}" -i ./deploy/cluster-agent/Chart.yaml
-          ./yq e ".appVersion = ${VERSION}" -i ./deploy/cluster-agent/Chart.yaml
+          yq e ".version = ${VERSION}" -i ./deploy/cluster-agent/Chart.yaml
+          yq e ".appVersion = ${VERSION}" -i ./deploy/cluster-agent/Chart.yaml
 
       # TODO: Setup GPG signing
       # - name: Prepare GPG key
@@ -90,10 +105,21 @@ jobs:
       #   run: |
       #     helm repo add bitnami https://charts.bitnami.com/bitnami
 
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.1.0
+      # package and upload manually since
+      - name: Package
+        run: |
+          cr package
+
+      - name: Upload
+        uses: softprops/action-gh-release@v1
         with:
-          charts_dir: deploy
-          config: cr.yaml
+          files: |
+            .cr-release-packages/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.CHART_RELEASER_TOKEN }}
+
+      - name: Index
+        run: |
+          cr index
         env:
           CR_TOKEN: "${{ secrets.CHART_RELEASER_TOKEN }}"
