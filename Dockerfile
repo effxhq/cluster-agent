@@ -17,6 +17,8 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 
 FROM gcr.io/distroless/base-debian10
 
+LABEL org.opencontainers.image.source="https://github.com/effxhq/cluster-agent"
+
 COPY --from=BUILDER /effx/cluster-agent /usr/bin/cluster-agent
 
 CMD [ "/usr/bin/cluster-agent" ]
