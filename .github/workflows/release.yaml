@@ -50,8 +50,8 @@ jobs:
       - name: Prepare
         run: |
           sudo apt-get install wget
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config user.name effxbot
+          git config user.email mya+bot@effx.com
           git remote add charts https://github.com/effxhq/charts.git
           git fetch --all
           mkdir .cr-index/
