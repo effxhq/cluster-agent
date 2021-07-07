@@ -108,7 +108,7 @@ jobs:
       # package and upload manually since
       - name: Package
         run: |
-          cr package
+          cr package deploy/cluster-agent
 
       - name: Upload
         uses: softprops/action-gh-release@v1
