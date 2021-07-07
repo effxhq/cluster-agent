@@ -63,7 +63,7 @@ jobs:
 
       - name: Set Versions
         shell: bash
-        run:
+        run: |
           export VERSION="\"${GITHUB_REF##*/v}\""
           ./yq e ".version = ${VERSION}" -i ./deploy/cluster-agent/Chart.yaml
           ./yq e ".appVersion = ${VERSION}" -i ./deploy/cluster-agent/Chart.yaml
