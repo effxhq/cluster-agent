@@ -50,7 +50,7 @@ jobs:
 
       - name: Prepare
         run: |
-          sudo snap install yq --channel=v3/stable
+          sudo snap install yq
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
@@ -61,8 +61,8 @@ jobs:
 
       - name: Set Versions
         run:
-          yq -w -i ./deploy/cluster-agent/Chart.yaml version ${GITHUB_REF##*/v}
-          yq -w -i ./deploy/cluster-agent/Chart.yaml appVersion ${GITHUB_REF##*/v}
+          yq e ".version = \"${GITHUB_REF##*/v}\"" -i ./deploy/cluster-agent/Chart.yaml
+          yq e ".appVersion = \"${GITHUB_REF##*/v}\"" -i ./deploy/cluster-agent/Chart.yaml
 
       # TODO: Setup GPG signing
       # - name: Prepare GPG key
