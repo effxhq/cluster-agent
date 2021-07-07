@@ -50,7 +50,7 @@ jobs:
 
       - name: Prepare
         run: |
-          snap install yq --channel=v3/stable
+          sudo snap install yq --channel=v3/stable
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
