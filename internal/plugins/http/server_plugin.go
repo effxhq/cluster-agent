@@ -23,7 +23,9 @@ func ServerPlugin() lifecycle.Plugin {
 				http.ServeContent(writer, request, "", time.Now(), bytes.NewReader(nil))
 			}))
 
-			go http.Serve(listener, mux)
+			go func() {
+				_ = http.Serve(listener, mux)
+			}()
 			return nil
 		},
 	}
