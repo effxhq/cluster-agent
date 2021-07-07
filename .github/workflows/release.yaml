@@ -51,7 +51,7 @@ jobs:
       - name: Prepare
         run: |
           sudo apt-get install wget
-          wget https://github.com/mikefarah/yq/releases/download/v4.9.7/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+          wget https://github.com/mikefarah/yq/releases/download/v4.9.7/yq_linux_amd64 -O ./yq && chmod +x ./yq
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
@@ -62,8 +62,8 @@ jobs:
 
       - name: Set Versions
         run:
-          /usr/bin/yq e ".version = \"${GITHUB_REF##*/v}\"" -i ./deploy/cluster-agent/Chart.yaml
-          /usr/bin/yq e ".appVersion = \"${GITHUB_REF##*/v}\"" -i ./deploy/cluster-agent/Chart.yaml
+          ./yq e ".version = \"${GITHUB_REF##*/v}\"" -i ./deploy/cluster-agent/Chart.yaml
+          ./yq e ".appVersion = \"${GITHUB_REF##*/v}\"" -i ./deploy/cluster-agent/Chart.yaml
 
       # TODO: Setup GPG signing
       # - name: Prepare GPG key
