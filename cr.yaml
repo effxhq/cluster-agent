@@ -1,3 +1,5 @@
 charts-repo: https://charts.effx.run/
 owner: effxhq
-git-repo: charts
+git-repo: cluster-agent
+remote: charts
+release-name-template: "v{{ .Version }}"

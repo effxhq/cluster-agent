@@ -22,4 +22,5 @@ vendor/
 
 deploy/cluster-agent/values-dev.yaml
 
-
+.cr-index/
+.cr-release-packages/

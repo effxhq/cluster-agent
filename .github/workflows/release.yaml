@@ -46,14 +46,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
       - name: Prepare
         run: |
           sudo apt-get install wget
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git remote add charts https://github.com/effxhq/charts.git
+          git fetch --all
 
       - name: Install yq
         env:
@@ -120,6 +120,6 @@ jobs:
 
       - name: Index
         run: |
-          cr index
+          cr index --push
         env:
           CR_TOKEN: "${{ secrets.CHART_RELEASER_TOKEN }}"
