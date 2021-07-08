@@ -130,6 +130,7 @@ jobs:
       - name: Index
         run: |
           cr index
+          git stash
           git checkout charts/gh-pages
           git push
         env:
