@@ -130,10 +130,7 @@ jobs:
 
       - name: Index
         run: |
-          cr index
-          git stash
-          git checkout charts/gh-pages
-          git commit --amend -m "Update index.yaml"
-          git push charts HEAD:gh-pages
+          git config --unset --local http.https://github.com/.extraheader
+          cr index --push
         env:
           CR_TOKEN: "${{ secrets.CHART_RELEASER_TOKEN }}"
