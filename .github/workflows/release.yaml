@@ -49,6 +49,7 @@ jobs:
 
       - uses: oleksiyrudenko/gha-git-credentials@v2.1
         with:
+          global: true
           name: 'effxbot'
           email: 'mya+bot@effx.com'
           actor: 'effxbot'
@@ -56,6 +57,8 @@ jobs:
 
       - name: Prepare
         run: |
+          git config --global url."https://effxbot:".insteadOf "https://x-access-token:"
+
           git remote add charts https://github.com/effxhq/charts.git
           git fetch --all
 
@@ -129,9 +132,6 @@ jobs:
 
       - name: Index
         run: |
-          cr index
-          git stash
-          git checkout charts/gh-pages
-          git push
+          cr index --pr
         env:
           CR_TOKEN: "${{ secrets.CHART_RELEASER_TOKEN }}"
