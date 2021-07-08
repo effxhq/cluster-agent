@@ -44,18 +44,19 @@ jobs:
       - container
 
     steps:
+      - uses: oleksiyrudenko/gha-git-credentials@v2.1
+        with:
+          global: true
+          name: 'effxbot'
+          email: 'mya+bot@effx.com'
+          actor: 'effxbot'
+          token: ${{ secrets.CHART_RELEASER_TOKEN }}
+
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Prepare
-        env:
-          GITHUB_TOKEN: ${{ secrets.CHART_RELEASER_TOKEN }}
         run: |
-          git config --global user.name effxbot
-          git config --global user.email mya+bot@effx.com
-          git config --global user.password ${GITHUB_TOKEN}
-          echo "GIT_USER=effxbot:${GITHUB_TOKEN}" >> $GITHUB_ENV
-
           git remote add charts https://github.com/effxhq/charts.git
           git fetch --all
 
