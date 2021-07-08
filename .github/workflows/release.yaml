@@ -130,6 +130,7 @@ jobs:
       - name: Index
         run: |
           cr index
-          git push charts/gh-pages
+          git checkout charts/gh-pages
+          git push
         env:
           CR_TOKEN: "${{ secrets.CHART_RELEASER_TOKEN }}"
