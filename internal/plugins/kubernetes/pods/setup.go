@@ -26,8 +26,10 @@ func (t *tracker) Enqueue(name string, pod *corev1.Pod) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
+	if t.index[name] == nil {
+		t.queue = append(t.queue, name)
+	}
 	t.index[name] = pod
-	t.queue = append(t.queue, name)
 }
 
 func (t *tracker) Dequeue(name string) {
