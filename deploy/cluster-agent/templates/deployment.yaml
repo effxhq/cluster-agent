@@ -45,14 +45,19 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.effx.existingSecret }}
                   key: secretKey
+            - name: EFFX_CLUSTER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.effx.existingSecret }}
+                  key: clusterName
             {{- else }}
             - name: EFFX_EXTERNAL_ID
               value: {{ .Values.effx.externalID | quote }}
             - name: EFFX_SECRET_KEY
               value: {{ .Values.effx.secretKey | quote }}
-            {{- end }}
             - name: EFFX_CLUSTER_NAME
               value: {{ .Values.effx.clusterName | quote }}
+            {{- end }}
           ports:
             - name: http
               containerPort: 8080
