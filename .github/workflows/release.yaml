@@ -115,7 +115,8 @@ jobs:
       #   run: |
       #     helm repo add bitnami https://charts.bitnami.com/bitnami
 
-      # package and upload manually since
+      # package and upload manually
+      # chart-releaser has some minor headaches when tags already exist at commit.
       - name: Package
         run: |
           cr package deploy/cluster-agent
