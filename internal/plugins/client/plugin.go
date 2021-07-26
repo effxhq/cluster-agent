@@ -11,6 +11,7 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/pkg/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
@@ -63,6 +64,12 @@ func (c httpClient) PostResource(ctx context.Context, obj interface{}) error {
 		return errors.Wrap(err, "failed to marshal the request")
 	}
 
+	// pull the resource identifier off the object (if present)
+	var requestID string
+	if c, ok := obj.(*metav1.ObjectMeta); ok {
+		requestID = string(c.GetUID())
+	}
+
 	// /v3/hooks/kubernetes/:external_ID
 	endpoint := c.BaseURL + "/v3/hooks/kubernetes/" + c.ExternalID
 
@@ -71,6 +78,7 @@ func (c httpClient) PostResource(ctx context.Context, obj interface{}) error {
 		return errors.Wrap(err, "failed to form request")
 	}
 
+	req.Header.Set("X-Effx-Request-Id", requestID)
 	req.Header.Set("Authorization", fmt.Sprintf("Token token=%v", c.SecretKey))
 	req.Header.Set(effxClusterNameHeader, c.ClusterName)
 
