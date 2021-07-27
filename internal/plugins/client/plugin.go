@@ -64,12 +64,6 @@ func (c httpClient) PostResource(ctx context.Context, obj interface{}) error {
 		return errors.Wrap(err, "failed to marshal the request")
 	}
 
-	// pull the resource identifier off the object (if present)
-	var requestID string
-	if c, ok := obj.(*metav1.ObjectMeta); ok {
-		requestID = string(c.GetUID())
-	}
-
 	// /v3/hooks/kubernetes/:external_ID
 	endpoint := c.BaseURL + "/v3/hooks/kubernetes/" + c.ExternalID
 
@@ -78,7 +72,12 @@ func (c httpClient) PostResource(ctx context.Context, obj interface{}) error {
 		return errors.Wrap(err, "failed to form request")
 	}
 
-	req.Header.Set("X-Effx-Request-Id", requestID)
+	if c, ok := obj.(*metav1.ObjectMeta); ok && c.GetUID() != "" {
+		// need uid and version to properly report resources
+		requestID := string(c.GetUID()) + "-" + c.GetResourceVersion()
+		req.Header.Set("X-Request-ID", requestID)
+	}
+
 	req.Header.Set("Authorization", fmt.Sprintf("Token token=%v", c.SecretKey))
 	req.Header.Set(effxClusterNameHeader, c.ClusterName)
 
