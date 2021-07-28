@@ -19,7 +19,7 @@ const (
 )
 
 type Grant struct {
-	Name    string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempt y"`
+	Name    string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Allowed bool   `protobuf:"varint,2,opt,name=allowed,proto3" json:"allowed,omitempty"`
 }
 
