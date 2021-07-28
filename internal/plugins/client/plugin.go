@@ -11,6 +11,7 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/pkg/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
@@ -18,7 +19,7 @@ const (
 )
 
 type Grant struct {
-	Name    string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempt y"`
+	Name    string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Allowed bool   `protobuf:"varint,2,opt,name=allowed,proto3" json:"allowed,omitempty"`
 }
 
@@ -69,6 +70,12 @@ func (c httpClient) PostResource(ctx context.Context, obj interface{}) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, bytes.NewBuffer(request))
 	if err != nil {
 		return errors.Wrap(err, "failed to form request")
+	}
+
+	if c, ok := obj.(*metav1.ObjectMeta); ok && c.GetUID() != "" {
+		// need uid and version to properly report resources
+		requestID := string(c.GetUID()) + "-" + c.GetResourceVersion()
+		req.Header.Set("X-Request-ID", requestID)
 	}
 
 	req.Header.Set("Authorization", fmt.Sprintf("Token token=%v", c.SecretKey))
