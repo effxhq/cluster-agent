@@ -56,7 +56,7 @@ func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plu
 			return nil, nil
 		}
 
-		heartbeat.Enqueue(id, true)
+		heartbeat.Enqueue(ctx, id)
 
 		return pod, nil
 	})

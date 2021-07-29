@@ -55,24 +55,29 @@ func (h *Heartbeat) Dequeue(id string) {
 
 // Enqueue adds the provided id to the list of elements to process. If runNow is true, then the element is enqueued
 // using the current timestamp rather than one in the future. This operation should be close to log(n) runtime.
-func (h *Heartbeat) Enqueue(id string) {
-	if e := h.items[id]; e != nil {
-		return
-	}
-
-	h.enqueue(id)
-}
-
-func (h *Heartbeat) enqueue(id string) {
+func (h *Heartbeat) Enqueue(ctx context.Context, id string) {
 	h.mu.Lock()
-	defer h.mu.Unlock()
 
-	if _, ok := h.items[id]; !ok {
+	_, alreadyExists := h.items[id]
+	if !alreadyExists {
 		h.items[id] = &item{
 			cancelled: false,
 			timestamp: 0,
 		}
 	}
+
+	h.mu.Unlock()
+
+	if alreadyExists {
+		return
+	}
+
+	h.heartbeat(ctx, id)
+}
+
+func (h *Heartbeat) enqueue(id string) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
 
 	if h.items[id].cancelled {
 		delete(h.items, id)
