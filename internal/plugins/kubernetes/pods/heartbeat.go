@@ -110,6 +110,11 @@ func (h *Heartbeat) Poll(ctx context.Context) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
+	// preflight...
+	if len(h.queue) == 0 {
+		return
+	}
+
 	now := h.Clock.Now().UnixNano()
 	i := 0
 
