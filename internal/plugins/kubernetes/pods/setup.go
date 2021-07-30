@@ -26,7 +26,7 @@ func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plu
 		log := logger.With(
 			zap.String("kind", "pod"),
 			zap.String("namespace", parts[0]),
-			zap.String("name", parts[0]),
+			zap.String("name", parts[1]),
 		)
 
 		pod, err := cache.Get(parts[0], parts[1])
@@ -44,10 +44,12 @@ func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plu
 
 		err = httpClient.PostResource(ctx, pod)
 		if err != nil {
-			logger.Error("", zap.Error(err))
+			logger.Error("failed to post resource", zap.Error(err))
 			return
 		}
 	})
+
+	heartbeat.Start(ctx)
 
 	podController.OnChange(ctx, appconf.Name, func(id string, pod *corev1.Pod) (*corev1.Pod, error) {
 		if pod == nil {
