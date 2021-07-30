@@ -112,7 +112,7 @@ func (h *Heartbeat) Poll(ctx context.Context) {
 
 	// preflight...
 	if len(h.queue) == 0 {
-		return;
+		return
 	}
 
 	now := h.Clock.Now().UnixNano()
