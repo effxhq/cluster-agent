@@ -2,6 +2,8 @@ package pods
 
 import (
 	"context"
+	"strings"
+	"time"
 
 	"github.com/rancher/wrangler-api/pkg/generated/controllers/core"
 	"go.uber.org/zap"
@@ -15,13 +17,22 @@ import (
 
 func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plugin.HTTPClient) {
 	podController := coreFactory.Core().V1().Pod()
-	podController.Informer()
-	podController.Cache()
+	cache := podController.Cache()
 
-	podController.OnChange(ctx, appconf.Name, func(id string, pod *corev1.Pod) (*corev1.Pod, error) {
-		if pod == nil {
-			// delete from cache
-			return nil, nil
+	logger := zap_plugin.FromContext(ctx)
+
+	heartbeat := NewHeartbeat(time.Minute, func(ctx context.Context, id string) {
+		parts := strings.SplitN(id, "/", 2)
+		log := logger.With(
+			zap.String("kind", "pod"),
+			zap.String("namespace", parts[0]),
+			zap.String("name", parts[1]),
+		)
+
+		pod, err := cache.Get(parts[0], parts[1])
+		if err != nil {
+			log.Error("failed to get element from cache", zap.Error(err))
+			return
 		}
 
 		pod.TypeMeta = metav1.TypeMeta{
@@ -29,13 +40,25 @@ func Setup(ctx context.Context, coreFactory *core.Factory, httpClient client_plu
 			Kind:       "Pod",
 		}
 
-		zap_plugin.FromContext(ctx).Info("pod", zap.String("id", id))
+		logger.Info("heartbeating pod", zap.String("id", id))
 
-		err := httpClient.PostResource(ctx, pod)
-
+		err = httpClient.PostResource(ctx, pod)
 		if err != nil {
-			return nil, err
+			logger.Error("failed to post resource", zap.Error(err))
+			return
 		}
+	})
+
+	heartbeat.Start(ctx)
+
+	podController.OnChange(ctx, appconf.Name, func(id string, pod *corev1.Pod) (*corev1.Pod, error) {
+		if pod == nil {
+			// delete from cache
+			heartbeat.Dequeue(id)
+			return nil, nil
+		}
+
+		heartbeat.Enqueue(ctx, id)
 
 		return pod, nil
 	})
